@@ -25,6 +25,7 @@ length_input = st.selectbox("Select Explanation Length", ["Short (1-2 paragraphs
 
 template = load_prompt('template.json')
 
+# We can invoke the prompt directly using the template and model, but for clarity, we will create a chain that combines both.
 # prompt = template.invoke({
 #     'paper_input' : paper_input ,
 #     'style_input' : style_input,
