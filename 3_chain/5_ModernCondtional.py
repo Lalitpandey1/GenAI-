@@ -8,7 +8,6 @@ from typing import Literal
 from dotenv import load_dotenv
 
 load_dotenv()
-model = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 parser = StrOutputParser()
 
 
@@ -16,16 +15,16 @@ parser = StrOutputParser()
 class Feedback(BaseModel):
     sentiment : Literal['Positive', 'Negative'] = Field(description='Give the sentiment of the feedback')
 
-parser2 = PydanticOutputParser(pydantic_object=Feedback)
-pydantic_parser = PydanticOutputParser(pydantic_object=Feedback)
+model = ChatOpenAI(model="gpt-4o-mini", temperature=0).with_structured_output(Feedback)
+# parser2 = PydanticOutputParser(pydantic_object=Feedback)
+# pydantic_parser = PydanticOutputParser(pydantic_object=Feedback)
 
 prompt1 = PromptTemplate(
-    template='Classify the feedback from the user into positive or negative.\n{format_instructions}\nFeedback: {feedback}', 
+    template='Classify the feedback from the user into positive or negative.\nFeedback: {feedback}', 
     input_variables=['feedback'], 
-    partial_variables={'format_instructions': pydantic_parser.get_format_instructions()}
 )
 
-classifier_chain = prompt1 | model | pydantic_parser
+classifier_chain = prompt1 | model | parser
 
 # --- Part 2: Branching Responses Setup ---
 
